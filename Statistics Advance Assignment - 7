@@ -1,0 +1,326 @@
+
+Q1. Write a Python function that takes in two arrays of data and calculates the F-value for a variance ratio test. The function should return the F-value and the corresponding p-value for the test.
+
+import numpy as np
+from scipy.stats import f
+
+def variance_ratio_test(data1, data2):
+    # Calculate the variances of the two datasets
+    var1 = np.var(data1, ddof=1)  # ddof=1 for unbiased estimation
+    var2 = np.var(data2, ddof=1)
+    
+    # Calculate the F-value and p-value
+    f_value = var1 / var2
+    p_value = f.cdf(f_value, len(data1)-1, len(data2)-1)  # Cumulative Distribution Function
+    
+    return f_value, p_value
+data1 = [1, 2, 3, 4, 5]
+data2 = [2, 4, 6, 8, 10]
+
+f_value, p_value = variance_ratio_test(data1, data2)
+print("F-value:", f_value)
+print("p-value:", p_value)
+F-value: 0.25
+p-value: 0.10400000000000002
+Q2
+Q2. Given a significance level of 0.05 and the degrees of freedom for the numerator and denominator of an F-distribution, write a Python function that returns the critical F-value for a two-tailed test.
+
+from scipy.stats import f
+
+def critical_f_value(significance_level, df_num, df_den):
+    # Calculate the critical F-value
+    critical_value = f.ppf(1 - significance_level / 2, df_num, df_den)
+    
+    return critical_value
+significance_level = 0.05
+df_num = 5
+df_den = 10
+
+critical_value = critical_f_value(significance_level, df_num, df_den)
+print("Critical F-value:", critical_value)
+Critical F-value: 4.236085668188633
+Q3
+Q3. Write a Python program that generates random samples from two normal distributions with known
+
+variances and uses an F-test to determine if the variances are equal. The program should output the F- value, degrees of freedom, and p-value for the test.
+
+import numpy as np
+from scipy.stats import f
+
+def f_test_for_variances(data1, data2):
+    # Calculate the variances of the two datasets
+    var1 = np.var(data1, ddof=1)  # ddof=1 for unbiased estimation
+    var2 = np.var(data2, ddof=1)
+    
+    # Calculate the degrees of freedom
+    df1 = len(data1) - 1
+    df2 = len(data2) - 1
+    
+    # Calculate the F-value and p-value
+    f_value = var1 / var2
+    p_value = f.sf(f_value, df1, df2) * 2  # Survival Function (1 - CDF) multiplied by 2 for two-tailed test
+    
+    return f_value, df1, df2, p_value
+
+# Generate random samples from two normal distributions
+np.random.seed(42)  # Set a seed for reproducibility
+data1 = np.random.normal(loc=0, scale=1, size=100)
+data2 = np.random.normal(loc=0, scale=1.5, size=100)
+
+# Perform the F-test
+f_value, df1, df2, p_value = f_test_for_variances(data1, data2)
+
+# Print the results
+print("F-value:", f_value)
+print("Degrees of Freedom (numerator, denominator):", df1, ",", df2)
+print("p-value:", p_value)
+F-value: 0.4030463392763856
+Degrees of Freedom (numerator, denominator): 99 , 99
+p-value: 1.9999908083753242
+Q4
+Q4.The variances of two populations are known to be 10 and 15. A sample of 12 observations is taken from each population. Conduct an F-test at the 5% significance level to determine if the variances are significantly different.
+
+from scipy.stats import f
+
+# Known variances
+var1 = 10
+var2 = 15
+
+# Sample sizes
+n1 = 12
+n2 = 12
+
+# Calculate the degrees of freedom
+df1 = n1 - 1
+df2 = n2 - 1
+
+# Calculate the F-value
+f_value = var1 / var2
+
+# Calculate the critical F-value
+significance_level = 0.05
+critical_value = f.ppf(1 - significance_level / 2, df1, df2)
+
+# Perform the F-test
+p_value = f.sf(f_value, df1, df2) * 2
+
+# Determine if variances are significantly different
+if f_value > critical_value:
+    conclusion = "Reject the null hypothesis. Variances are significantly different."
+else:
+    conclusion = "Fail to reject the null hypothesis. Variances are not significantly different."
+
+# Print the results
+print("F-value:", f_value)
+print("Degrees of Freedom (numerator, denominator):", df1, ",", df2)
+print("Critical F-value:", critical_value)
+print("p-value:", p_value)
+print("Conclusion:", conclusion)
+F-value: 0.6666666666666666
+Degrees of Freedom (numerator, denominator): 11 , 11
+Critical F-value: 3.473699051085809
+p-value: 1.4876102012642005
+Conclusion: Fail to reject the null hypothesis. Variances are not significantly different.
+Q5
+Q5. A manufacturer claims that the variance of the diameter of a certain product is 0.005. A sample of 25 products is taken, and the sample variance is found to be 0.006. Conduct an F-test at the 1% significance level to determine if the claim is justified.
+
+from scipy.stats import f
+
+# Claimed variance
+claimed_variance = 0.005
+
+# Sample variance
+sample_variance = 0.006
+
+# Sample size
+n = 25
+
+# Calculate the degrees of freedom
+df1 = n - 1
+df2 = n - 1
+
+# Calculate the F-value
+f_value = sample_variance / claimed_variance
+
+# Calculate the critical F-value
+significance_level = 0.01
+critical_value = f.ppf(1 - significance_level, df1, df2)
+
+# Perform the F-test
+p_value = f.sf(f_value, df1, df2)
+
+# Determine if the claim is justified
+if f_value < critical_value:
+    conclusion = "Fail to reject the null hypothesis. The claim is justified."
+else:
+    conclusion = "Reject the null hypothesis. The claim is not justified."
+
+# Print the results
+print("F-value:", f_value)
+print("Degrees of Freedom (numerator, denominator):", df1, ",", df2)
+print("Critical F-value:", critical_value)
+print("p-value:", p_value)
+print("Conclusion:", conclusion)
+F-value: 1.2
+Degrees of Freedom (numerator, denominator): 24 , 24
+Critical F-value: 2.659072104348157
+p-value: 0.32936546828172447
+Conclusion: Fail to reject the null hypothesis. The claim is justified.
+Q6
+Q6. Write a Python function that takes in the degrees of freedom for the numerator and denominator of an F-distribution and calculates the mean and variance of the distribution. The function should return the mean and variance as a tuple.
+
+def f_distribution_stats(df_num, df_den):
+    # Calculate the mean and variance of the F-distribution
+    mean = df_den / (df_den - 2)
+    variance = (2 * df_den**2 * (df_num + df_den - 2)) / (df_num * (df_den - 2)**2 * (df_den - 4))
+    
+    return mean, variance
+df_num = 5
+df_den = 10
+
+mean, variance = f_distribution_stats(df_num, df_den)
+print("Mean:", mean)
+print("Variance:", variance)
+Mean: 1.25
+Variance: 1.3541666666666667
+Q7
+Q7. A random sample of 10 measurements is taken from a normal population with unknown variance. The sample variance is found to be 25. Another random sample of 15 measurements is taken from another normal population with unknown variance, and the sample variance is found to be 20. Conduct an F-test at the 10% significance level to determine if the variances are significantly different.
+
+from scipy.stats import f
+
+# Sample variances
+sample_variance1 = 25
+sample_variance2 = 20
+
+# Sample sizes
+n1 = 10
+n2 = 15
+
+# Calculate the degrees of freedom
+df1 = n1 - 1
+df2 = n2 - 1
+
+# Calculate the F-value
+f_value = sample_variance1 / sample_variance2
+
+# Calculate the critical F-value
+significance_level = 0.10
+critical_value = f.ppf(1 - significance_level, df1, df2)
+
+# Perform the F-test
+p_value = f.sf(f_value, df1, df2)
+
+# Determine if the variances are significantly different
+if f_value > critical_value:
+    conclusion = "Reject the null hypothesis. Variances are significantly different."
+else:
+    conclusion = "Fail to reject the null hypothesis. Variances are not significantly different."
+
+# Print the results
+print("F-value:", f_value)
+print("Degrees of Freedom (numerator, denominator):", df1, ",", df2)
+print("Critical F-value:", critical_value)
+print("p-value:", p_value)
+print("Conclusion:", conclusion)
+F-value: 1.25
+Degrees of Freedom (numerator, denominator): 9 , 14
+Critical F-value: 2.121954566976902
+p-value: 0.34160971912929744
+Conclusion: Fail to reject the null hypothesis. Variances are not significantly different.
+Q8
+Q8. The following data represent the waiting times in minutes at two different restaurants on a Saturday night: Restaurant A: 24, 25, 28, 23, 22, 20, 27; Restaurant B: 31, 33, 35, 30, 32, 36. Conduct an F-test at the 5% significance level to determine if the variances are significantly different.
+
+from scipy.stats import f
+
+# Waiting times data
+restaurant_a = [24, 25, 28, 23, 22, 20, 27]
+restaurant_b = [31, 33, 35, 30, 32, 36]
+
+# Sample variances
+sample_variance_a = sum((x - np.mean(restaurant_a))**2 for x in restaurant_a) / (len(restaurant_a) - 1)
+sample_variance_b = sum((x - np.mean(restaurant_b))**2 for x in restaurant_b) / (len(restaurant_b) - 1)
+
+# Sample sizes
+n1 = len(restaurant_a)
+n2 = len(restaurant_b)
+
+# Calculate the degrees of freedom
+df1 = n1 - 1
+df2 = n2 - 1
+
+# Calculate the F-value
+f_value = sample_variance_a / sample_variance_b
+
+# Calculate the critical F-value
+significance_level = 0.05
+critical_value = f.ppf(1 - significance_level, df1, df2)
+
+# Perform the F-test
+p_value = f.sf(f_value, df1, df2)
+
+# Determine if the variances are significantly different
+if f_value > critical_value:
+    conclusion = "Reject the null hypothesis. Variances are significantly different."
+else:
+    conclusion = "Fail to reject the null hypothesis. Variances are not significantly different."
+
+# Print the results
+print("F-value:", f_value)
+print("Degrees of Freedom (numerator, denominator):", df1, ",", df2)
+print("Critical F-value:", critical_value)
+print("p-value:", p_value)
+print("Conclusion:", conclusion)
+F-value: 1.4551907719609583
+Degrees of Freedom (numerator, denominator): 6 , 5
+Critical F-value: 4.950288068694318
+p-value: 0.34874078739687414
+Conclusion: Fail to reject the null hypothesis. Variances are not significantly different.
+Q9
+Q9. The following data represent the test scores of two groups of students: Group A: 80, 85, 90, 92, 87, 83; Group B: 75, 78, 82, 79, 81, 84. Conduct an F-test at the 1% significance level to determine if the variances are significantly different.
+
+from scipy.stats import f
+
+# Test scores data
+group_a = [80, 85, 90, 92, 87, 83]
+group_b = [75, 78, 82, 79, 81, 84]
+
+# Sample variances
+sample_variance_a = sum((x - np.mean(group_a))**2 for x in group_a) / (len(group_a) - 1)
+sample_variance_b = sum((x - np.mean(group_b))**2 for x in group_b) / (len(group_b) - 1)
+
+# Sample sizes
+n1 = len(group_a)
+n2 = len(group_b)
+
+# Calculate the degrees of freedom
+df1 = n1 - 1
+df2 = n2 - 1
+
+# Calculate the F-value
+f_value = sample_variance_a / sample_variance_b
+
+# Calculate the critical F-value
+significance_level = 0.01
+critical_value = f.ppf(1 - significance_level, df1, df2)
+
+# Perform the F-test
+p_value = f.sf(f_value, df1, df2)
+
+# Determine if the variances are significantly different
+if f_value > critical_value:
+    conclusion = "Reject the null hypothesis. Variances are significantly different."
+else:
+    conclusion = "Fail to reject the null hypothesis. Variances are not significantly different."
+
+# Print the results
+print("F-value:", f_value)
+print("Degrees of Freedom (numerator, denominator):", df1, ",", df2)
+print("Critical F-value:", critical_value)
+print("p-value:", p_value)
+print("Conclusion:", conclusion)
+F-value: 1.9442622950819677
+Degrees of Freedom (numerator, denominator): 5 , 5
+Critical F-value: 10.967020650907992
+p-value: 0.2415521774535344
+Conclusion: Fail to reject the null hypothesis. Variances are not significantly different.
+ 
